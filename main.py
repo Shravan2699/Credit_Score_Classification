@@ -19,8 +19,9 @@ from sklearn import tree
 from sklearn.metrics import mean_squared_error,mean_absolute_error,explained_variance_score
 from sklearn.metrics import classification_report
 from sklearn.metrics import confusion_matrix
-# from statsmodels.stats.outliers_influence import variance_inflation_factor
+from statsmodels.stats.outliers_influence import variance_inflation_factor
 import statsmodels.api as sm
+import math
 
 
 sns.set_style("whitegrid")
@@ -157,7 +158,7 @@ for i in ['monthly_inhand_salary',"amount_invested_monthly",'num_credit_inquirie
 
 
 
-# #######################################################################################
+# #######################################################################################   
 #EDA
 print(df.info())
 
@@ -166,6 +167,9 @@ df_num = df.select_dtypes(include='number')
 print(df_num.info())
 print(df_cat.info())
 
+
+# df.to_csv('Dataset_post_cleaning.csv', index=False)
+#Creates a csv file post data cleaning 
 
 #Categorical features:
 
@@ -176,79 +180,78 @@ for col in df_cat:
 
 
 
-# #Occupation
-# plt.figure(figsize=(10,5))
-# ax = sns.countplot(x='occupation',data=df_cat,order=df['occupation'].value_counts().index)
-# plt.title('Counts of Unique Occupations')
-# plt.xlabel('Occupation')
-# plt.ylabel('Counts')
-# for p in ax.patches:
-#     ax.annotate('{}'.format(p.get_height()),(p.get_x()+0.1,p.get_height()+50))
+#Occupation
+plt.figure(figsize=(10,5))
+ax = sns.countplot(x='occupation',data=df_cat,order=df['occupation'].value_counts().index)
+plt.title('Counts of Unique Occupations')
+plt.xlabel('Occupation')
+plt.ylabel('Counts')
+for p in ax.patches:
+    ax.annotate('{}'.format(p.get_height()),(p.get_x()+0.1,p.get_height()+50))
+
+plt.xticks(rotation=90)
+plt.show()
+
+
+#Credit Mix
+plt.figure(figsize=(10,5))
+ax = sns.countplot(x='credit_mix',data=df_cat,order=df['credit_mix'].value_counts().index)
+plt.title('Credit Mix Counts')
+plt.xlabel('Credit Mix')
+plt.ylabel('Counts')
+for p in ax.patches:
+    ax.annotate('{}'.format(p.get_height()),(p.get_x()+0.1,p.get_height()+50))
 
 # plt.xticks(rotation=90)
-# plt.show()
+plt.show()
+
+print(df_cat.info())
 
 
-# # #Credit Mix
-# plt.figure(figsize=(10,5))
-# ax = sns.countplot(x='credit_mix',data=df_cat,order=df['credit_mix'].value_counts().index)
-# plt.title('Credit Mix Counts')
-# plt.xlabel('Credit Mix')
-# plt.ylabel('Counts')
-# for p in ax.patches:
-#     ax.annotate('{}'.format(p.get_height()),(p.get_x()+0.1,p.get_height()+50))
+#Payment of Minimum Amount
+plt.figure(figsize=(10,5))
+ax = sns.countplot(x='payment_of_min_amount',data=df_cat,order=df['payment_of_min_amount'].value_counts().index)
+plt.title('Payment of min_amount Counts')
+plt.xlabel('Minimum Amount Paid?')
+plt.ylabel('Counts')
+for p in ax.patches:
+    ax.annotate('{}'.format(p.get_height()),(p.get_x()+0.1,p.get_height()+50))
 
-# # plt.xticks(rotation=90)
-# plt.show()
+# plt.xticks(rotation=90)
+plt.show()
 
-# print(df_cat.info())
+#Payment Behaviour
+plt.figure(figsize=(10,5))
+ax = sns.countplot(x='payment_behaviour',data=df_cat,order=df['payment_behaviour'].value_counts().index)
+plt.title('Payment behaviour Counts')
+plt.xlabel('Payment Behaviour')
+plt.ylabel('Counts')
+for p in ax.patches:
+    ax.annotate('{}'.format(p.get_height()),(p.get_x()+0.1,p.get_height()+50))
+plt.xticks(rotation=45)
+plt.show()
 
-
-# # #Payment of Minimum Amount
-# plt.figure(figsize=(10,5))
-# ax = sns.countplot(x='payment_of_min_amount',data=df_cat,order=df['payment_of_min_amount'].value_counts().index)
-# plt.title('Payment of min_amount Counts')
-# plt.xlabel('Minimum Amount Paid?')
-# plt.ylabel('Counts')
-# for p in ax.patches:
-#     ax.annotate('{}'.format(p.get_height()),(p.get_x()+0.1,p.get_height()+50))
-
-# # plt.xticks(rotation=90)
-# plt.show()
-
-# # #Payment Behaviour
-# plt.figure(figsize=(10,5))
-# ax = sns.countplot(x='payment_behaviour',data=df_cat,order=df['payment_behaviour'].value_counts().index)
-# plt.title('Payment behaviour Counts')
-# plt.xlabel('Payment Behaviour')
-# plt.ylabel('Counts')
-# for p in ax.patches:
-#     ax.annotate('{}'.format(p.get_height()),(p.get_x()+0.1,p.get_height()+50))
+#Credit Score
+plt.figure(figsize=(10,5))
+ax = sns.countplot(x='credit_score',data=df_cat,order=df['credit_score'].value_counts().index)
+plt.title('Credit_score Counts')
+plt.xlabel('Credit Score')
+plt.ylabel('Counts')
+for p in ax.patches:
+  ax.annotate('{}'.format(p.get_height()),(p.get_x()+0.1,p.get_height()+50))
 # plt.xticks(rotation=45)
-# plt.show()
-
-# # #Credit Score
-# plt.figure(figsize=(10,5))
-# ax = sns.countplot(x='credit_score',data=df_cat,order=df['credit_score'].value_counts().index)
-# plt.title('Credit_score Counts')
-# plt.xlabel('Credit Score')
-# plt.ylabel('Counts')
-# for p in ax.patches:
-#   ax.annotate('{}'.format(p.get_height()),(p.get_x()+0.1,p.get_height()+50))
-# # plt.xticks(rotation=45)
-# plt.show()
+plt.show()
 
 
 # #NUMERICAL DATA COLUMNS
 
-
 # #Correlation Heatmap
-# corr = df_num.corr()
+corr = df_num.corr()
 
 
-# plt.figure(figsize=(10,5))
-# sns.heatmap(corr.corr(),cmap="GnBu",center=0,annot=True)
-# plt.show()
+plt.figure(figsize=(10,5))
+sns.heatmap(corr.corr(),cmap="GnBu",center=0,annot=True)
+plt.show()
 
 numeric_cols =  df.select_dtypes(exclude="object").columns
 cat_cols = df.select_dtypes(include="object").columns
@@ -261,106 +264,110 @@ cat_cols = df.select_dtypes(include="object").columns
 # #We will only consider the numeric columns to compute this
 vif_df = df[numeric_cols]
 print(vif_df.describe())
-# X = sm.add_constant(vif_df)
-# vif_data = pd.DataFrame()
-# vif_data["feature"] = X.columns
+X = sm.add_constant(vif_df)
+vif_data = pd.DataFrame()
+vif_data["feature"] = X.columns
 
-# # Calculate VIF
-# # sm.OLS(X[col], X.drop(col, axis=1)): sm refers to the statsmodels library, and OLS stands for Ordinary Least Squares, which is a method for estimating the parameters of a linear regression model.
-# # For each iteration, this part of the code fits a simple linear regression model where the current column (col) is the dependent variable, and all other columns (excluding the current one) are independent variables.
-# # fit(): This method fits the linear regression model to the data.
-# # .rsquared: The rsquared attribute retrieves the coefficient of determination for the fitted regression model.It measures the proportion of the variance in the dependent variable explained by the independent variables.
-# # The entire formula for VIF is 1/1-R^2
-# # VIF scores for each variables indicate Athe extent to which the variance of each variable is inflated due to potential multicollinearity with other independent variables. Higher VIF values suggest a higher degree of multicollinearity for the corresponding variable.
-# vif_values = [1 / (1 - sm.OLS(X[col], X.drop(col, axis=1)).fit().rsquared) for col in X.columns[1:]]
+# Calculate VIF
+# sm.OLS(X[col], X.drop(col, axis=1)): sm refers to the statsmodels library, and OLS stands for Ordinary Least Squares, which is a method for estimating the parameters of a linear regression model.
+# For each iteration, this part of the code fits a simple linear regression model where the current column (col) is the dependent variable, and all other columns (excluding the current one) are independent variables.
+# fit(): This method fits the linear regression model to the data.
+# .rsquared: The rsquared attribute retrieves the coefficient of determination for the fitted regression model.It measures the proportion of the variance in the dependent variable explained by the independent variables.
+# The entire formula for VIF is 1/1-R^2
+# VIF scores for each variables indicate Athe extent to which the variance of each variable is inflated due to potential multicollinearity with other independent variables. Higher VIF values suggest a higher degree of multicollinearity for the corresponding variable.
+vif_values = [1 / (1 - sm.OLS(X[col], X.drop(col, axis=1)).fit().rsquared) for col in X.columns[1:]]
 
-# # Create DataFrame
-# vif_data = pd.DataFrame({'feature': X.columns[1:], 'VIF': vif_values})
+# Create DataFrame
+vif_data = pd.DataFrame({'feature': X.columns[1:], 'VIF': vif_values})
 
-# print(vif_data)
+print(vif_data)
 
-# #We will now remove the features with vif greater than 2 as values above 2 are seen as a signal that there may be multicollinearity issues.
-# df = df.drop(['monthly_inhand_salary','amount_invested_monthly','monthly_balance'],axis=1)
-# # df = df.dropna(subset=df.columns.values)
+#We will now remove the features with vif greater than 2 as values above 2 are seen as a signal that there may be multicollinearity issues.
+df = df.drop(['monthly_inhand_salary','amount_invested_monthly','monthly_balance'],axis=1)
+# df = df.dropna(subset=df.columns.values)
 
 
-# #Data Preparatio
-# X = df.drop('credit_score', axis=1)  # Features
+# #Data Preparation
+X = df.drop('credit_score', axis=1)  # Features
 # #This line creates a new DataFrame X by dropping the column 'credit_score' from the original DataFrame df. The axis=1 parameter indicates that we are dropping a column (as opposed to a row).
-# y = df['credit_score']  # Target variable
+y = df['credit_score']  # Target variable
 # #Here, a Series y is created, representing the target variable 'credit_score' from the original DataFrame df.
 
 
 # # # Split the data into training and testing sets
-# X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 # #We will take 20% data as test data
 # #This line uses the train_test_split function from scikit-learn to split the data into training and testing sets. 
 # #X_train and y_train are the features and target variable for the training set, and X_test and y_test are the features and target variable for the testing set.
 # #The test_size=0.2 parameter indicates that 20% of the data will be used for testing, and random_state=42 ensures reproducibility by fixing the random seed.
 
-# numeric_cols_train = X_train.select_dtypes(include=['number']).columns.tolist()
+numeric_cols_train = X_train.select_dtypes(include=['number']).columns.tolist()
 # #This line of the code uses the select_dtypes method of the DataFrame X_train to select columns of numeric data types.We then select the column names with
 # # .columns method.Then we will use .tolist() method to convert 
-# numeric_cols = [col for col in numeric_cols if col in numeric_cols_train]
+numeric_cols = [col for col in numeric_cols if col in numeric_cols_train]
 # # This is a list comprehension that iterates over each column name (col) in the numeric_cols list.
 # # It includes only those columns for which the column name is also present in the numeric_cols_train list
 
-# X_train_encoded = pd.get_dummies(X_train, columns=['occupation', 'credit_mix', 'payment_of_min_amount', 'payment_behaviour'])
-# X_test_encoded = pd.get_dummies(X_test, columns=['occupation', 'credit_mix', 'payment_of_min_amount', 'payment_behaviour'])
-# #We use one-hot encoding for our categorical features to make them binary
-# #One hot encoding basically converts the columns into binary form very each categorical column has either 0 or 1 as the value
+
+X_train_encoded = pd.get_dummies(X_train, columns=['occupation', 'credit_mix', 'payment_of_min_amount', 'payment_behaviour'])
+X_test_encoded = pd.get_dummies(X_test, columns=['occupation', 'credit_mix', 'payment_of_min_amount', 'payment_behaviour'])
+#We use one-hot encoding for our categorical features to make them binary
+#One hot encoding basically converts the columns into binary form very each categorical column has either 0 or 1 as the value
 
 
-# scaler = StandardScaler()
-# #Creates an instance of the StandardScaler class.
-# X_train_encoded[numeric_cols] = scaler.fit_transform(X_train_encoded[numeric_cols])
-# #The fit_transform method is called on the scaler, which fits the scaler to the training data (X_train_encoded[numeric_cols]) and then transforms it. 
-# #This means it calculates the mean and standard deviation of the numeric columns in X_train_encoded and applies the transformation to standardize these columns.
-# #The result is assigned back to the corresponding columns in X_train_encoded.
 
-# X_test_encoded[numeric_cols] = scaler.transform(X_test_encoded[numeric_cols])
-# #Here, the same scaler instance is used to transform the numeric columns in the test dataset 
+scaler = StandardScaler()
+#Creates an instance of the StandardScaler class.
+X_train_encoded[numeric_cols] = scaler.fit_transform(X_train_encoded[numeric_cols])
+#The fit_transform method is called on the scaler, which fits the scaler to the training data (X_train_encoded[numeric_cols]) and then transforms it. 
+#This means it calculates the mean and standard deviation of the numeric columns in X_train_encoded and applies the transformation to standardize these columns.
+#The result is assigned back to the corresponding columns in X_train_encoded.
+
+X_test_encoded[numeric_cols] = scaler.transform(X_test_encoded[numeric_cols])
+#Here, the same scaler instance is used to transform the numeric columns in the test dataset 
 
 
 
 
 
 # # # #Model-Logistic Regression
-# logreg = LogisticRegression()
-# #This creates an instance of the logistic regression model
-# logreg.fit(X_train_encoded, y_train)
-# # This line fits (trains) the logistic regression model on the training data.
+logreg = LogisticRegression()
+#This creates an instance of the logistic regression model
+logreg.fit(X_train_encoded, y_train)
+# This line fits (trains) the logistic regression model on the training data.
 
-# y_pred = logreg.predict(X_test_encoded)
-# #The predict method of the logistic regression model takes the preprocessed test data (X_test_encoded) as input and returns an array of predicted labels (y_pred).
-# #Each element in y_pred corresponds to the predicted class label for the corresponding row in the test dataset.
+y_pred = logreg.predict(X_test_encoded)
+#The predict method of the logistic regression model takes the preprocessed test data (X_test_encoded) as input and returns an array of predicted labels (y_pred).
+#Each element in y_pred corresponds to the predicted class label for the corresponding row in the test dataset.
 
-# # Create a DataFrame to display actual and predicted values side by side
-# results_df = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
-# results_df = results_df.reset_index(drop=True)
-# print(results_df)
+# Create a DataFrame to display actual and predicted values side by side
 
 
+results_df = pd.DataFrame({'Actual': y_test, 'Predicted': y_pred})
 
-# print("Accuracy:", accuracy_score(y_test, y_pred))
-# #It calculates the accuracy of the model's predictions by comparing the predicted labels (y_pred) with the actual labels (y_test)
 
-# print(classification_report(y_test, y_pred))
-# #It generates a text report with various classification metrics, such as precision, recall, and F1-score, for each class in your classification problem.
-# #It provides a more detailed view of the model's performance than accuracy alone.
-# #Precision - Precision checks how many predicted positives are actually positive?
-# #Recall -  Recall checks how many actual positives did we capture in our predictions?
-# #F1-score -  2 * (Precision * Recall) / (Precision + Recall).It is the harmonic mean of recall and precision.
-# #F1-score considers both false positives and false negatives, providing a single score that balances precision and recall
 
-# cm = confusion_matrix(y_test, y_pred)
-# #It calculates the confusion matrix using the confusion_matrix function from scikit-learn's metrics module. 
-# #A confusion matrix is a table that summarizes the performance of a classification algorithm.
-# #It shows the counts of true positive, true negative, false positive, and false negative predictions.
-# plt.figure(figsize=(8, 6))
-# sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=logreg.classes_, yticklabels=logreg.classes_)
-# plt.xlabel('Predicted')
-# plt.ylabel('True')
-# plt.title('Confusion Matrix')
-# plt.show()
+print("Accuracy:", accuracy_score(y_test, y_pred))
+#It calculates the accuracy of the model's predictions by comparing the predicted labels (y_pred) with the actual labels (y_test)
 
+print(classification_report(y_test, y_pred))
+#It generates a text report with various classification metrics, such as precision, recall, and F1-score, for each class in your classification problem.
+#It provides a more detailed view of the model's performance than accuracy alone.
+#Precision - Precision checks how many predicted positives are actually positive?
+#Recall -  Recall checks how many actual positives did we capture in our predictions?
+#F1-score -  2 * (Precision * Recall) / (Precision + Recall).It is the harmonic mean of recall and precision.
+#F1-score considers both false positives and false negatives, providing a single score that balances precision and recall
+
+cm = confusion_matrix(y_test, y_pred)
+#It calculates the confusion matrix using the confusion_matrix function from scikit-learn's metrics module. 
+#A confusion matrix is a table that summarizes the performance of a classification algorithm.
+#It shows the counts of true positive, true negative, false positive, and false negative predictions.
+plt.figure(figsize=(8, 6))
+sns.heatmap(cm, annot=True, fmt="d", cmap="Blues", xticklabels=logreg.classes_, yticklabels=logreg.classes_)
+plt.xlabel('Predicted')
+plt.ylabel('True')
+plt.title('Confusion Matrix')
+plt.show()
+
+
+# Writes actual/predicted test values to a CSV file
