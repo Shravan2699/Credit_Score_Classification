@@ -1,4 +1,7 @@
 #Test data is used to evalute the model's accuracy after training the data
+
+
+#$
 from ast import increment_lineno
 from xml.etree.ElementInclude import include
 import numpy as np
@@ -39,7 +42,7 @@ warnings.filterwarnings('ignore')
 
 ##Above code imports all the necessary libraries and helps with the presentation of data
 
-
+#$
 #Loading the dataset
 df = pd.read_csv('./data/train.csv')
 # print(df.head())
@@ -52,13 +55,15 @@ df.columns = [x.lower() for x in df.columns]
 
 print(df.shape)
 
+#$
 #Dropping not needed columns
 df.drop(['id','customer_id','month','name','ssn','type_of_loan','credit_history_age'],axis=1,inplace=True)
 
+#$
 print(df.info())
 print(df.duplicated().value_counts()) 
 
-
+#$
 # #Checking for null values in the dataset next
 print(df.isnull().sum().reset_index().rename(columns={'index': 'feature_name',0: 'null_counts'}))
 print(df.shape[0])
@@ -66,6 +71,7 @@ print(df.shape[0])
 
 # #Dropping null values
 # #This line filters the DataFrame df by keeping only those rows where the sum of NaN values across columns is less than 3. It drops rows that have more than 2 NaN values.
+#$
 size_before_cleaning = df.shape
 df = df[df.isnull().sum(axis=1) < 3]
 print(f"{size_before_cleaning[0] - df.shape[0]} records dropped")
@@ -79,7 +85,6 @@ def amount_invested_monthly(col):
         return str(col)
     
 df["amount_invested_monthly"] = df["amount_invested_monthly"].apply(amount_invested_monthly)
-
 df["amount_invested_monthly"].replace('', np.nan, inplace=True)
 
 # Drop rows with NaN in the "amount_invested_monthly" column
@@ -268,6 +273,7 @@ X = sm.add_constant(vif_df)
 vif_data = pd.DataFrame()
 vif_data["feature"] = X.columns
 
+#$
 # Calculate VIF
 # sm.OLS(X[col], X.drop(col, axis=1)): sm refers to the statsmodels library, and OLS stands for Ordinary Least Squares, which is a method for estimating the parameters of a linear regression model.
 # For each iteration, this part of the code fits a simple linear regression model where the current column (col) is the dependent variable, and all other columns (excluding the current one) are independent variables.
