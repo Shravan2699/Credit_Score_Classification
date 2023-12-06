@@ -9,6 +9,7 @@ This project implements a credit score classification model using machine learni
 
   - Prerequisites
   - Installation
+  - File Structure
 
 ### Prerequisites
 
@@ -21,3 +22,23 @@ This project implements a credit score classification model using machine learni
 
    ```bash
    git clone git@github.com:Shravan2699/Credit_Score_Classification.git
+
+#### File Structure
+
+- **data/:** Contains datasets used by the project.
+  - *train.csv*
+  - ...
+
+- **EDA_Snips/:** Contains all the plots generated with the code.
+  - *Confusion_matrix.png*
+  - ...
+
+- **main.py:** Python file consisting of all the code used in the project.
+
+- **README.md:** The main documentation file.
+
+- **Code_Guide.docx:** Refer to *Code_Guide.docx* for an in-depth guide on the code, its functionality, and expected output.
+
+
+
+
